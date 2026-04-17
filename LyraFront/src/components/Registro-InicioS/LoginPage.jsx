@@ -4,13 +4,16 @@ import "./LoginScreen.css";
 import Ieyeon from "../../assets/ojoson.png";
 import Ieyeoff from "../../assets/ojosoff.png";
 
-export default function LoginScreen({ onNavigateToHome, onNavigateToRegister }) {
+export default function LoginScreen({
+  onNavigateToHome,
+  onNavigateToRegister,
+  onNavigateToFotgotPassword,
+}) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="login-container">
       <div className="login-card">
-        
         {/* Ícono superior */}
         <div className="login-icon-container">
           <div className="login-icon">🎹</div>
@@ -24,7 +27,6 @@ export default function LoginScreen({ onNavigateToHome, onNavigateToRegister }) 
 
         {/* Formulario */}
         <div className="login-form">
-
           {/* Input: Correo */}
           <div className="login-field">
             <label className="login-label">Correo electrónico</label>
@@ -51,7 +53,7 @@ export default function LoginScreen({ onNavigateToHome, onNavigateToRegister }) 
                 alt="Mostrar/Ocultar contraseña"
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
-                />
+              />
             </div>
           </div>
 
@@ -60,7 +62,7 @@ export default function LoginScreen({ onNavigateToHome, onNavigateToRegister }) 
             <button
               type="button"
               className="forgot-password-btn"
-              onClick={() => console.log("Navegar a recuperar contraseña")}
+              onClick={onNavigateToFotgotPassword}
             >
               ¿Olvidaste la contraseña?
             </button>
@@ -90,7 +92,6 @@ export default function LoginScreen({ onNavigateToHome, onNavigateToRegister }) 
             <p className="social-text">ó continua con:</p>
             <button className="social-button">G</button>
           </div>
-
         </div>
       </div>
     </div>
