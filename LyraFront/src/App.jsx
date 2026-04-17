@@ -4,8 +4,8 @@ import { ExerciseResultOverlay } from "./components/exercise/ExerciseResultOverl
 import HomePage from "./components/HomePage.jsx";
 import { useExerciseSession } from "./hooks/useExerciseSession.js";
 import { EXERCISES } from "./lib/exercises.js";
-import RegisterScreen from "./components/RegisterPage.jsx";
-import LoginScreen from "./components/LoginPage.jsx";
+import RegisterScreen from "./components/Registro-InicioS/RegisterPage.jsx";
+import LoginScreen from "./components/Registro-InicioS/LoginPage.jsx";
 
 export default function App() {
   const [page, setPage] = useState("login");
