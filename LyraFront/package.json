@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@tonejs/midi": "^2.0.28",
+    "@vexflow-fonts/bravura": "^1.0.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tone": "^15.1.22",

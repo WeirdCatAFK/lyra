@@ -71,7 +71,7 @@ export function HandDiagram({ side, activeFinger }) {
 const S = {
   imageContainer: { width: 110, height: 130 },
   img:            { width: '100%', height: '100%', objectFit: 'contain', opacity: 0.85 },
-  glowDot:        { width: 22, height: 22, backgroundColor: '#d94a2c', opacity: 0.25 },
+  glowDot:        { width: 22, height: 22, backgroundColor: 'var(--color-accent)', opacity: 0.45 },
   caption:        { color: 'var(--color-muted)' },
 }
 

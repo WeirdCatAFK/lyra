@@ -167,12 +167,14 @@
   .chat-input {
     display: flex;
     border-top: 1px solid #ccc;
+    color:black;
   }
   
   .chat-input input {
     flex-grow: 1;
     border: none;
     padding: 10px;
+    color:black;
   }
   
   .chat-input input:focus {

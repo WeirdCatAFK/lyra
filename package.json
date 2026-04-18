@@ -1,0 +1,19 @@
+{
+  "name": "lyra",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "ginstall":  "cd LyraBackend && npm install && cd ../LyraFront && npm install",
+    "backend":  "cd LyraBackend && node index.js",
+    "ai":       "cd LyraAI && uvicorn app.main:app --host 0.0.0.0 --port 8001",
+    "frontend": "cd LyraFront && npm run dev",
+    "dev":      "concurrently -n backend,ai,frontend -c cyan,magenta,green \"npm run backend\" \"npm run ai\" \"npm run frontend\"",
+    "services": "concurrently -n backend,ai -c cyan,magenta \"npm run backend\" \"npm run ai\"",
+    "test":     "node tests.js",
+    "test:ci":  "wait-on http://localhost:3000/health http://localhost:8001/health --timeout 30000 && node tests.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "wait-on": "^8.0.0"
+  }
+}

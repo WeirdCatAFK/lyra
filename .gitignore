@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+LyraFront/dist/
+LyraFront/.vite/
+
+# Environment
+.env
+.env.local
+.env.*.local
+**/.env
+!**/.env.example
+
+# SQLite databases
+*.sqlite
+*.sqlite-journal
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+LyraAI/.venv/
+LyraAI/data/
+LyraAI/weights/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Claude / agent state
+.claude/

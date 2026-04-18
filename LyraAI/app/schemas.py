@@ -23,6 +23,7 @@ class RecommendResponse(BaseModel):
     strategy_hint: str | None = None
     selected_by: str            # "cnn" | "deterministic"
     cnn_epsilon: float
+    llm_active: bool = False    # False when running the CNN-only cycle
 
 
 class TrainSample(BaseModel):

@@ -49,12 +49,41 @@ class LLMLayer:
         return None
 
 
+_TRUE = {"1", "true", "yes", "on"}
+_FALSE = {"0", "false", "no", "off"}
+
+
 class GeminiLLMLayer(LLMLayer):
     """LLM layer backed by Google Gemini (gemini-2.0-flash or similar).
 
-    Set GEMINI_API_KEY env var to enable. Falls back to stub if key is absent.
+    Two operating modes:
+      - CNN-only (default when GEMINI_API_KEY is absent or LYRA_USE_LLM=false):
+        the layer is disabled, recommendations pass through CNN unmodified,
+        no strategy hints are produced.
+      - CNN + LLM (when GEMINI_API_KEY is set and LYRA_USE_LLM is unset/true):
+        each CNN pick is reviewed by Gemini, which may add a strategy hint.
+
     Override GEMINI_MODEL env var to change the model (default: gemini-2.0-flash).
     """
+
+    def __init__(self) -> None:
+        flag = os.getenv("LYRA_USE_LLM", "").strip().lower()
+        has_key = bool(os.getenv("GEMINI_API_KEY", "").strip())
+        if flag in _FALSE:
+            self._enabled = False
+        elif flag in _TRUE:
+            self._enabled = has_key
+            if not has_key:
+                log.warning("LYRA_USE_LLM=true but GEMINI_API_KEY is missing — running CNN-only.")
+        else:
+            self._enabled = has_key
+        log.info("LLM layer %s (CNN-only cycle %s)",
+                 "enabled" if self._enabled else "disabled",
+                 "off" if self._enabled else "on")
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled
 
     _SYSTEM_PROMPT = (
         "You are Lyra, an AI music teacher. You receive a JSON state report describing "
@@ -74,6 +103,8 @@ class GeminiLLMLayer(LLMLayer):
     )
 
     def _call_llm(self, report: StateReport) -> LLMDecision | None:
+        if not self._enabled:
+            return None
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             return None

@@ -27,7 +27,7 @@ const STAFF_HEIGHT       = STAFF_LINE_SPACING * 4
 const STAFF_GAP          = 56
 const BASS_Y             = STAVE_TOP_MARGIN + STAFF_HEIGHT + STAFF_GAP
 
-const ACCENT_COLOR  = '#d94a2c'
+const ACCENT_COLOR  = '#ff5fa2'
 const NEUTRAL_COLOR = '#1a1a1a'
 
 // ─── Core render function ────────────────────────────────────────────────────
@@ -48,7 +48,6 @@ function renderScore({ container, notes, currentMeasure, beatsPerMeasure, finger
   const renderer = new Renderer(container, Renderer.Backends.SVG)
   renderer.resize(containerWidth, scoreHeight)
   const ctx = renderer.getContext()
-  ctx.setFont('Arial', 10)
 
   const SIDE_MARGIN    = 12
   const usableWidth    = containerWidth - SIDE_MARGIN * 2
@@ -250,6 +249,19 @@ export function MusicScore({
   const vfContainerRef = useRef(null)
   const layoutRef      = useRef(null)
   const [playheadLeft, setPlayheadLeft] = useState('20%')
+  const [fontsReady, setFontsReady] = useState(
+    () => typeof document !== 'undefined' && document.fonts?.check?.('16px Bravura') === true
+  )
+
+  useEffect(() => {
+    if (fontsReady) return
+    if (typeof document === 'undefined' || !document.fonts?.load) return
+    let cancelled = false
+    document.fonts.load('16px Bravura').then(() => {
+      if (!cancelled) setFontsReady(true)
+    })
+    return () => { cancelled = true }
+  }, [fontsReady])
 
   const currentMeasure = Math.max(0, Math.floor(currentBeat / beatsPerMeasure))
 
@@ -273,7 +285,7 @@ export function MusicScore({
       scoreHeight,
     })
     layoutRef.current = layout
-  }, [currentMeasure, activePitchKey, notes, activeFingeringMap, scoreHeight, beatsPerMeasure]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentMeasure, activePitchKey, notes, activeFingeringMap, scoreHeight, beatsPerMeasure, fontsReady]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Playhead position — fires every tick without touching VexFlow DOM
   useEffect(() => {

@@ -48,7 +48,7 @@ export function PianoKeyboard({
         const isBoth     = isExpected && isPressed
 
         if (key.isBlack) {
-          const bg = isBoth ? '#c03820' : isPressed ? '#3a3a3a' : isExpected ? 'var(--color-accent)' : '#1a1a1a'
+          const bg = isBoth ? '#c7347a' : isPressed ? '#3a3a3a' : isExpected ? 'var(--color-accent)' : '#1a1a1a'
           return (
             <div
               key={key.midi}
@@ -58,7 +58,7 @@ export function PianoKeyboard({
           )
         }
 
-        const bg = isBoth ? '#c03820' : isPressed ? '#c8c8c8' : isExpected ? 'var(--color-accent)' : '#fafafa'
+        const bg = isBoth ? '#c7347a' : isPressed ? '#e8dfd0' : isExpected ? 'var(--color-accent)' : '#fafafa'
         return (
           <div
             key={key.midi}
@@ -92,8 +92,8 @@ const whiteKeyStyle = (x, wkw, bg, isExpected, isPressed) => ({
   width:           wkw - 1,
   height:          KEYBOARD_HEIGHT_PX,
   backgroundColor: bg,
-  borderLeft:      '1px solid var(--color-border)',
-  borderRight:     '1px solid var(--color-border)',
+  borderLeft:      '1px solid rgba(0,0,0,0.12)',
+  borderRight:     '1px solid rgba(0,0,0,0.12)',
   boxShadow:       isExpected || isPressed
     ? 'inset 0 -4px 8px rgba(0,0,0,0.2)'
     : 'inset 0 -4px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1)',

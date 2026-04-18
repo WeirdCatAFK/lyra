@@ -5,7 +5,7 @@ const ADVANCE_DELAY_MS = 5000
 /**
  * Full-screen overlay shown after an exercise loop completes.
  * Displays per-metric scores and an optional improvement delta.
- * Auto-advances after ADVANCE_DELAY_MS; the "Next →" button skips the wait.
+ * Auto-advances after ADVANCE_DELAY_MS; the "Siguiente" button skips the wait.
  *
  * @param {{
  *   result:   import('../lib/constants').ExerciseResult,
@@ -19,7 +19,7 @@ export function ExerciseResultOverlay({ result, onNext, autoMs = ADVANCE_DELAY_M
   useEffect(() => {
     if (!result) return
     setCountdown(Math.round(autoMs / 1000))
-    const tick = setInterval(() => setCountdown((n) => n - 1), 1000)
+    const tick = setInterval(() => setCountdown((n) => Math.max(0, n - 1)), 1000)
     const go   = setTimeout(onNext, autoMs)
     return () => { clearInterval(tick); clearTimeout(go) }
   }, [result, autoMs, onNext])
@@ -27,42 +27,54 @@ export function ExerciseResultOverlay({ result, onNext, autoMs = ADVANCE_DELAY_M
   if (!result) return null
 
   const overall = result.metrics.length
-    ? result.metrics.reduce((sum, m) => sum + m.value * m.difficulty, 0) /
-      result.metrics.reduce((sum, m) => sum + m.difficulty, 0)
+    ? result.metrics.reduce((sum, m) => sum + m.value * (m.difficulty ?? 1), 0) /
+      result.metrics.reduce((sum, m) => sum + (m.difficulty ?? 1), 0)
     : null
+
+  const overallPct = overall !== null ? Math.round(overall * 100) : null
+  const verdict = overallPct === null ? null
+    : overallPct >= 85 ? '¡Excelente!'
+    : overallPct >= 70 ? 'Buen trabajo'
+    : overallPct >= 50 ? 'Sigue practicando'
+    : 'Vuelve a intentarlo'
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center" style={S.backdrop}>
-      <div className="flex flex-col items-center gap-6 px-10 py-10 rounded-lg" style={S.card}>
+      <div style={S.card}>
 
-        <div className="flex flex-col items-center gap-1">
-          <h2 className="italic" style={S.title}>Exercise Complete</h2>
+        <header style={S.header}>
+          <p style={S.eyebrow}>Sesión completada</p>
+          <h2 style={S.title}>{verdict ?? 'Ejercicio completado'}</h2>
           {result.exerciseId && (
-            <p style={S.exerciseId}>{result.exerciseId}</p>
+            <p style={S.exerciseId}>Ejercicio · {result.exerciseId}</p>
           )}
-        </div>
+        </header>
+
+        {overallPct !== null && (
+          <div style={S.overallCard}>
+            <div style={S.overallTop}>
+              <span style={S.overallLabel}>Puntuación total</span>
+              <span style={S.overallValue}>{overallPct}<span style={S.overallUnit}>%</span></span>
+            </div>
+            <ProgressBar value={overall} thick />
+          </div>
+        )}
 
         {result.metrics.length > 0 && (
-          <div className="flex flex-col gap-3 w-full">
+          <div style={S.metricsList}>
             {result.metrics.map((m) => (
               <MetricRow key={m.label} metric={m} />
             ))}
           </div>
         )}
 
-        {overall !== null && (
-          <div className="flex flex-col items-center gap-1 w-full pt-2" style={S.overallSection}>
-            <div className="flex justify-between w-full items-baseline">
-              <span className="italic" style={S.overallLabel}>overall</span>
-              <span style={S.overallValue}>{Math.round(overall * 100)}%</span>
-            </div>
-            <ProgressBar value={overall} color="var(--color-accent)" />
-          </div>
-        )}
-
-        <button onClick={onNext} className="italic px-8 py-2 rounded" style={S.nextBtn}>
-          Next Exercise → <span style={S.countdown}>({countdown}s)</span>
-        </button>
+        <div style={S.footer}>
+          <button onClick={onNext} style={S.nextBtn}>
+            Siguiente ejercicio
+            <span style={S.countdown}>{countdown}s</span>
+          </button>
+          <p style={S.hint}>Avanza automáticamente</p>
+        </div>
       </div>
     </div>
   )
@@ -73,10 +85,10 @@ function MetricRow({ metric }) {
   const delta = metric.delta
 
   return (
-    <div className="flex flex-col gap-1 w-full">
-      <div className="flex justify-between items-baseline">
-        <span className="italic" style={S.metricLabel}>{metric.label}</span>
-        <div className="flex items-baseline gap-2">
+    <div style={S.metricRow}>
+      <div style={S.metricHeader}>
+        <span style={S.metricLabel}>{prettyLabel(metric.label)}</span>
+        <div style={S.metricRight}>
           {delta != null && (
             <span style={deltaStyle(delta)}>
               {delta >= 0 ? '+' : ''}{(delta * 100).toFixed(0)}
@@ -85,64 +97,203 @@ function MetricRow({ metric }) {
           <span style={S.metricValue}>{pct}%</span>
         </div>
       </div>
-      <ProgressBar value={metric.value} color="var(--color-accent)" opacity={0.7} />
+      <ProgressBar value={metric.value} />
     </div>
   )
 }
 
-function ProgressBar({ value, color, opacity = 1 }) {
+function ProgressBar({ value, thick = false }) {
   return (
-    <div className="w-full rounded-full overflow-hidden" style={S.progressTrack}>
-      <div style={progressFillStyle(value, color, opacity)} />
+    <div style={thick ? S.progressTrackThick : S.progressTrack}>
+      <div style={progressFillStyle(value, thick)} />
     </div>
   )
+}
+
+function prettyLabel(label) {
+  return String(label)
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
+const NAVY = '#021a54'
+const PINK = '#ff5fa2'
+const PINK_SOFT = '#ff85bb'
+
 const S = {
   backdrop: {
-    backgroundColor: 'rgba(245,237,224,0.88)',
-    backdropFilter:  'blur(6px)',
+    background:
+      'radial-gradient(ellipse 70% 55% at 50% 55%, rgba(255, 133, 187, 0.55) 0%, rgba(255, 133, 187, 0.25) 35%, rgba(2, 26, 84, 0.92) 70%), rgba(2, 26, 84, 0.92)',
+    backdropFilter: 'blur(8px)',
   },
   card: {
-    backgroundColor: 'var(--color-bg)',
-    border:          '1px solid var(--color-border)',
-    boxShadow:       '0 8px 40px rgba(0,0,0,0.12)',
-    minWidth:        340,
-    maxWidth:        480,
-    width:           '90%',
+    width: '92%',
+    maxWidth: 520,
+    background: '#ffffff',
+    borderRadius: 18,
+    padding: '2rem 2.25rem',
+    boxShadow: '0 24px 60px rgba(2, 26, 84, 0.35)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.5rem',
+    color: NAVY,
+    fontFamily: 'Poppins, sans-serif',
   },
-  title:         { fontSize: '1.6rem', color: 'var(--color-fg)' },
-  exerciseId:    { fontSize: '0.85rem', color: 'var(--color-muted)' },
-  overallSection:{ borderTop: '1px solid var(--color-border)' },
-  overallLabel:  { color: 'var(--color-muted)', fontSize: '0.85rem' },
-  overallValue:  { fontSize: '1.3rem', color: 'var(--color-fg)', fontWeight: 600 },
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
+    textAlign: 'center',
+  },
+  eyebrow: {
+    fontSize: '0.75rem',
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    color: PINK,
+    fontWeight: 600,
+  },
+  title: {
+    fontSize: '1.75rem',
+    fontWeight: 700,
+    color: NAVY,
+    lineHeight: 1.15,
+  },
+  exerciseId: {
+    fontSize: '0.8rem',
+    color: 'rgba(2, 26, 84, 0.55)',
+    marginTop: '0.25rem',
+  },
+  overallCard: {
+    background: 'linear-gradient(135deg, rgba(255, 95, 162, 0.10), rgba(2, 26, 84, 0.06))',
+    border: '1px solid rgba(2, 26, 84, 0.08)',
+    borderRadius: 12,
+    padding: '1rem 1.25rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem',
+  },
+  overallTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+  },
+  overallLabel: {
+    fontSize: '0.85rem',
+    color: 'rgba(2, 26, 84, 0.65)',
+    fontWeight: 500,
+  },
+  overallValue: {
+    fontSize: '2.25rem',
+    fontWeight: 700,
+    color: NAVY,
+    lineHeight: 1,
+  },
+  overallUnit: {
+    fontSize: '1rem',
+    fontWeight: 500,
+    color: 'rgba(2, 26, 84, 0.5)',
+    marginLeft: 2,
+  },
+  metricsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.85rem',
+  },
+  metricRow: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.4rem',
+  },
+  metricHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+  },
+  metricLabel: {
+    fontSize: '0.85rem',
+    color: 'rgba(2, 26, 84, 0.7)',
+    fontWeight: 500,
+  },
+  metricRight: {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '0.6rem',
+  },
+  metricValue: {
+    fontSize: '0.95rem',
+    color: NAVY,
+    fontWeight: 600,
+  },
+  progressTrack: {
+    width: '100%',
+    height: 6,
+    backgroundColor: 'rgba(2, 26, 84, 0.08)',
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+  progressTrackThick: {
+    width: '100%',
+    height: 10,
+    backgroundColor: 'rgba(2, 26, 84, 0.08)',
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+  footer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.5rem',
+    paddingTop: '0.5rem',
+    borderTop: '1px solid rgba(2, 26, 84, 0.08)',
+  },
   nextBtn: {
-    backgroundColor: 'var(--color-accent)',
-    color:           '#fff',
-    fontSize:        '1rem',
-    border:          'none',
-    cursor:          'pointer',
-    letterSpacing:   '0.02em',
+    width: '100%',
+    background: PINK,
+    color: '#fff',
+    border: 'none',
+    borderRadius: 999,
+    padding: '0.85rem 2rem',
+    fontSize: '1rem',
+    fontWeight: 600,
+    fontFamily: 'Poppins, sans-serif',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '0.75rem',
+    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.18)',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
   },
-  countdown:    { opacity: 0.7, fontSize: '0.8rem' },
-  metricLabel:  { color: 'var(--color-muted)', fontSize: '0.85rem' },
-  metricValue:  { fontSize: '1rem', color: 'var(--color-fg)', fontWeight: 600 },
-  progressTrack:{ height: 6, backgroundColor: 'var(--color-secondary)' },
+  countdown: {
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    background: 'rgba(255, 255, 255, 0.22)',
+    padding: '0.18rem 0.55rem',
+    borderRadius: 999,
+  },
+  hint: {
+    fontSize: '0.72rem',
+    color: 'rgba(2, 26, 84, 0.45)',
+    letterSpacing: '0.02em',
+  },
 }
 
 const deltaStyle = (delta) => ({
-  fontSize:   '0.8rem',
-  color:      delta >= 0 ? '#3a8a5a' : '#c03820',
+  fontSize: '0.78rem',
+  color: delta >= 0 ? '#1e7a4a' : '#c03820',
   fontWeight: 600,
+  background: delta >= 0 ? 'rgba(30, 122, 74, 0.10)' : 'rgba(192, 56, 32, 0.10)',
+  padding: '0.1rem 0.45rem',
+  borderRadius: 999,
 })
 
-const progressFillStyle = (value, color, opacity) => ({
-  width:           `${Math.round(value * 100)}%`,
-  height:          '100%',
-  backgroundColor: color,
-  opacity,
-  transition:      'width 0.6s ease',
-  borderRadius:    '9999px',
+const progressFillStyle = (value, thick) => ({
+  width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%`,
+  height: '100%',
+  background: `linear-gradient(90deg, ${PINK}, ${PINK_SOFT})`,
+  borderRadius: 999,
+  transition: 'width 0.6s ease',
+  boxShadow: thick ? '0 0 12px rgba(255, 95, 162, 0.4)' : 'none',
 })

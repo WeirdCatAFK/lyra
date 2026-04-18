@@ -1,0 +1,58 @@
+services:
+  backend:
+    build:
+      context: ./LyraBackend
+    container_name: lyra-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - lyra-data:/data
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_PATH=/data/database.sqlite
+      - DB_TIMEOUT=5000
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-30d}
+      - BCRYPT_SALT_ROUNDS=${BCRYPT_SALT_ROUNDS:-10}
+      - LYRA_AI_URL=http://ai:8001
+      - CORS_ORIGINS=${CORS_ORIGINS}
+    depends_on:
+      - ai
+    restart: unless-stopped
+
+  ai:
+    build:
+      context: ./LyraAI
+    container_name: lyra-ai
+    ports:
+      - "8001:8001"
+    volumes:
+      - lyra-data:/data
+    environment:
+      - DATA_DIR=/data
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - LYRA_USE_LLM=${LYRA_USE_LLM:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./LyraFront
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+        VITE_ALLOWED_HOSTS: ${VITE_ALLOWED_HOSTS:-}
+    container_name: lyra-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  lyra-data:
+    driver: local
