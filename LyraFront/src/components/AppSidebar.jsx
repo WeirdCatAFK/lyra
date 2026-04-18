@@ -3,7 +3,7 @@ import "./HomeScreen.css";
 const NAV_ITEMS = [
   { key: "practice",  label: "PRÁCTICA",     handlerKey: "onNavigateToPractice" },
   { key: "reports",   label: "REPORTES",     handlerKey: "onNavigateToReports" },
-  { key: "exercises", label: "EJERCICIOS IA", handlerKey: "onNavigateToExercises" },
+  { key: "exercises", label: "EJERCICIOS", handlerKey: "onNavigateToExercises" },
 ];
 
 /**

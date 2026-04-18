@@ -80,7 +80,7 @@ export default function HomeScreen({
                 className="nav-link nav-link--btn"
                 onClick={onNavigateToExercises}
               >
-                EJERCICIOS IA
+                EJERCICIOS
               </button>
             </>
           ) : (
