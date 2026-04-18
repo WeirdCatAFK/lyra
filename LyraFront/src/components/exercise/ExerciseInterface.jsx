@@ -226,7 +226,7 @@ export function ExerciseInterface({ config, devExercises = [], devExerciseIndex 
   return (
     <div
       ref={containerRef}
-      className="relative h-screen w-full overflow-hidden flex flex-col"
+      className="relative flex-1 w-full overflow-hidden flex flex-col min-h-0"
       style={S.root}
     >
       {panels.aiCommentary && (
@@ -246,7 +246,7 @@ export function ExerciseInterface({ config, devExercises = [], devExerciseIndex 
         />
       )}
 
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-0">
         {panels.leftHand && (
           <div className="absolute left-8 top-4 z-20">
             <HandDiagram side="left" activeFinger={getActiveFinger('left')} />
@@ -259,8 +259,8 @@ export function ExerciseInterface({ config, devExercises = [], devExerciseIndex 
         )}
 
         {panels.musicScore && (
-          <div className="absolute inset-x-0 top-0 z-10 flex justify-center">
-            <div className="w-full max-w-2xl px-12">
+          <div className="absolute inset-x-0 top-0 z-10 flex justify-center pt-4">
+            <div className="w-full max-w-2xl px-6 py-4" style={S.scorePanel}>
               <MusicScore
                 notes={config.notes}
                 currentBeat={currentBeat}
@@ -319,5 +319,12 @@ export function ExerciseInterface({ config, devExercises = [], devExerciseIndex 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const S = {
-  root: { backgroundColor: 'var(--color-bg)' },
+  root: { background: 'transparent' },
+  scorePanel: {
+    background:      'rgba(255, 255, 255, 0.92)',
+    backdropFilter:  'blur(8px)',
+    borderRadius:    '1.25rem',
+    border:          '1px solid rgba(255, 255, 255, 0.35)',
+    boxShadow:       '0 12px 32px rgba(0, 0, 0, 0.25)',
+  },
 }

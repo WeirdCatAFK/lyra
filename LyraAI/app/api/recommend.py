@@ -41,20 +41,26 @@ def recommend(body: RecommendRequest):
     ex_id_to_score = {ex.exercise_id: s for ex, s in zip(body.exercises, scores)}
     top_confidence = ex_id_to_score.get(top["exercise_id"], 0.0) if use_cnn else 0.0
 
-    state_report = StateReport(
-        user_id=body.user_id,
-        learning_objectives=body.learning_objectives,
-        cnn_recommendation=top,
-        cnn_confidence=top_confidence,
-        recent_metrics=body.recent_metrics,
-        n_sessions=body.n_sessions,
-    )
-    decision = _llm.process(state_report)
-    resolved = decision.exercise
+    if _llm.enabled:
+        state_report = StateReport(
+            user_id=body.user_id,
+            learning_objectives=body.learning_objectives,
+            cnn_recommendation=top,
+            cnn_confidence=top_confidence,
+            recent_metrics=body.recent_metrics,
+            n_sessions=body.n_sessions,
+        )
+        decision = _llm.process(state_report)
+        resolved = decision.exercise
+        strategy_hint = decision.strategy_hint
+    else:
+        resolved = top
+        strategy_hint = None
 
     return RecommendResponse(
         exercise_id=resolved["exercise_id"],
-        strategy_hint=decision.strategy_hint,
+        strategy_hint=strategy_hint,
         selected_by=resolved.get("selected_by", "deterministic"),
         cnn_epsilon=blender.epsilon,
+        llm_active=_llm.enabled,
     )

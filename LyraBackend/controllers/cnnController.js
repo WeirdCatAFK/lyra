@@ -1,12 +1,15 @@
 const db = require('../db/connection');
 
 exports.saveTrainingData = (req, res) => {
-    const { exercise_id, history_snapshot, improvement_delta, session_id } = req.body;
+    const { user_id, exercise_id, history_snapshot, exercise_difficulty, exercise_skills, improvement_delta, session_id } = req.body;
 
     db.run(
-        "INSERT INTO Cnn_training_data (exercise_id, history_snapshot, improvement_delta, timestap, session_id) VALUES (?, ?, ?, datetime('now'), ?)", [exercise_id, history_snapshot, improvement_delta, session_id],
+        `INSERT INTO Cnn_training_data
+         (user_id, exercise_id, history_snapshot, exercise_difficulty, exercise_skills, improvement_delta, timestamp, session_id)
+         VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)`,
+        [user_id, exercise_id, history_snapshot, exercise_difficulty, exercise_skills, improvement_delta, session_id],
         function(err) {
-            if (err) return res.status(500).json(err);
+            if (err) return res.status(500).json({ error: err.message });
             res.json({ id: this.lastID });
         }
     );
@@ -14,7 +17,18 @@ exports.saveTrainingData = (req, res) => {
 
 exports.getTrainingData = (req, res) => {
     db.all("SELECT * FROM Cnn_training_data", [], (err, rows) => {
-        if (err) return res.status(500).json(err);
+        if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });
+};
+
+exports.getUserTrainingData = (req, res) => {
+    db.all(
+        "SELECT * FROM Cnn_training_data WHERE user_id = ? ORDER BY timestamp ASC",
+        [req.params.user_id],
+        (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json(rows);
+        }
+    );
 };

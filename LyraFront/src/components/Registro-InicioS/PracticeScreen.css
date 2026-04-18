@@ -1,10 +1,13 @@
 /* ExercisesPage.css */
 .practice-page-container {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: sans-serif;
-  background: linear-gradient(to bottom, #021a54, #ff85bb);
+  font-family: 'Poppins', sans-serif;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 55%, #ff85bb 0%, rgba(255, 133, 187, 0.45) 35%, rgba(2, 26, 84, 0) 70%),
+    #021a54;
+  overflow: hidden;
 }
 
 /* --- BARRA DE NAVEGACIÓN --- */

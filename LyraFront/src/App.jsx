@@ -1,63 +1,91 @@
 import { useState } from "react";
-import { ExerciseInterface } from "./components/exercise/ExerciseInterface.jsx";
-import { ExerciseResultOverlay } from "./components/exercise/ExerciseResultOverlay.jsx";
 import HomePage from "./components/HomePage.jsx";
-import { useExerciseSession } from "./hooks/useExerciseSession.js";
-import { EXERCISES } from "./lib/exercises.js";
 import RegisterScreen from "./components/Registro-InicioS/RegisterPage.jsx";
 import LoginScreen from "./components/Registro-InicioS/LoginPage.jsx";
 import ForgotPassword from "./components/Registro-InicioS/ForgotPasswordPage.jsx";
 import PracticePage from "./components/Registro-InicioS/PracticePage.jsx";
-
+import ReportsPage from "./components/ReportsPage.jsx";
+import AiExercisesPage from "./components/AiExercisesPage.jsx";
+import { isLoggedIn, getUserId } from "./lib/api.js";
 
 export default function App() {
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState(() => isLoggedIn() ? "practice" : "home");
 
-  const { currentConfig, index, lastResult, isTransitioning, advance, jumpTo } =
-    useExerciseSession(EXERCISES);
+  const goToPractice  = () => setPage("practice");
+  const goToHome      = () => setPage("home");
+  const goToReports   = () => setPage("reports");
+  const goToExercises = () => setPage("exercises");
 
-  if (page == "login") {
+  if (page === "login") {
     return (
       <LoginScreen
         onNavigateToRegister={() => setPage("register")}
         onNavigateToFotgotPassword={() => setPage("forgot")}
-        onNavigateToHome={() => setPage("home")}
+        onNavigateToHome={goToHome}
+        onLoginSuccess={goToPractice}
       />
     );
   }
 
   if (page === "register") {
-    return <RegisterScreen onNavigateToHome={() => setPage("home")} />;
+    return (
+      <RegisterScreen
+        onNavigateToHome={goToHome}
+        onRegisterSuccess={goToPractice}
+      />
+    );
   }
 
   if (page === "forgot") {
     return <ForgotPassword onBackToLogin={() => setPage("login")} />;
   }
 
-  if (page === "home") {
+  if (page === "practice") {
     return (
-      <HomePage
-        onNavigateToLogin={() => setPage("login")}
-        onNavigateToRegister={() => setPage("register")}
+      <PracticePage
+        userId={getUserId()}
+        onLogout={goToHome}
+        onNavigateHome={goToHome}
+        onNavigateToPractice={goToPractice}
+        onNavigateToReports={goToReports}
+        onNavigateToExercises={goToExercises}
       />
     );
   }
 
-  if (page === "practice") {
-    return <PracticePage />;
+  if (page === "reports") {
+    return (
+      <ReportsPage
+        userId={getUserId()}
+        onLogout={goToHome}
+        onNavigateHome={goToHome}
+        onNavigateToPractice={goToPractice}
+        onNavigateToReports={goToReports}
+        onNavigateToExercises={goToExercises}
+      />
+    );
+  }
+
+  if (page === "exercises") {
+    return (
+      <AiExercisesPage
+        userId={getUserId()}
+        onLogout={goToHome}
+        onNavigateHome={goToHome}
+        onNavigateToPractice={goToPractice}
+        onNavigateToReports={goToReports}
+        onNavigateToExercises={goToExercises}
+      />
+    );
   }
 
   return (
-    <div className="relative w-full h-screen">
-      <ExerciseInterface
-        config={currentConfig}
-        devExercises={EXERCISES}
-        devExerciseIndex={index}
-        onDevSelectExercise={jumpTo}
-      />
-      {isTransitioning && (
-        <ExerciseResultOverlay result={lastResult} onNext={advance} />
-      )}
-    </div>
+    <HomePage
+      onNavigateToLogin={() => setPage("login")}
+      onNavigateToRegister={() => setPage("register")}
+      onNavigateToPractice={goToPractice}
+      onNavigateToReports={goToReports}
+      onNavigateToExercises={goToExercises}
+    />
   );
 }

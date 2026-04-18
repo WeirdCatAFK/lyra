@@ -1,0 +1,23 @@
+/* App shell — uses HomePage's `.home-header` (fixed glass bar) on top
+ * and a main content area below it. The 70px padding-top clears the
+ * fixed header. */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+.app-main {
+  flex: 1;
+  min-height: 0;
+  padding-top: 70px;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 55%, #ff85bb 0%, rgba(255, 133, 187, 0.45) 35%, rgba(2, 26, 84, 0) 70%),
+    #021a54;
+  overflow: auto;
+}
