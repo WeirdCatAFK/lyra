@@ -6,6 +6,7 @@ import { useExerciseSession } from "./hooks/useExerciseSession.js";
 import { EXERCISES } from "./lib/exercises.js";
 import RegisterScreen from "./components/Registro-InicioS/RegisterPage.jsx";
 import LoginScreen from "./components/Registro-InicioS/LoginPage.jsx";
+import ForgotPassword from "./components/Registro-InicioS/ForgotPasswordPage.jsx";
 
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
     return (
       <LoginScreen
         onNavigateToRegister={() => setPage("register")}
+        onNavigateToFotgotPassword={() => setPage("forgot")}
         onNavigateToHome={() => setPage("home")}
       />
     );
@@ -25,6 +27,10 @@ export default function App() {
 
   if (page === "register") {
     return <RegisterScreen onNavigateToHome={() => setPage("home")} />;
+  }
+
+  if (page === "forgot") {
+    return <ForgotPassword onBackToLogin={() => setPage("login")} />;
   }
 
   if (page === "home") {
