@@ -115,7 +115,7 @@ export function ExerciseInterface({ config, devExercises = [], devExerciseIndex 
   }
 
   // ─── Web MIDI ───────────────────────────────────────────────────────────
-  const { pressedNotes, devices, isConnected, error: midiError } = useWebMidi({
+  const { pressedNotes, devices, isConnected, keyboardActive, octaveOffset, error: midiError } = useWebMidi({
     onNoteOn: (pitch, velocity) => {
       playNote(pitch, velocity)
       emit('note_on', `pitch ${pitch}  vel ${(velocity * 127).toFixed(0)}`, currentBeat)
@@ -297,7 +297,13 @@ export function ExerciseInterface({ config, devExercises = [], devExerciseIndex 
 
         <div className="absolute bottom-36 right-6 z-20 flex flex-col items-end gap-2">
           {panels.midiStatus && (
-            <MidiStatus devices={devices} isConnected={isConnected} error={midiError} />
+            <MidiStatus
+              devices={devices}
+              isConnected={isConnected}
+              keyboardActive={keyboardActive}
+              octaveOffset={octaveOffset}
+              error={midiError}
+            />
           )}
           {panels.playControls && (
             <PlayControls isPlaying={isPlaying} onToggle={toggle} />
