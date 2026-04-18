@@ -9,8 +9,9 @@ import LoginScreen from "./components/Registro-InicioS/LoginPage.jsx";
 import ForgotPassword from "./components/Registro-InicioS/ForgotPasswordPage.jsx";
 import PracticePage from "./components/Registro-InicioS/PracticePage.jsx";
 
+
 export default function App() {
-  const [page, setPage] = useState("login");
+  const [page, setPage] = useState("home");
 
   const { currentConfig, index, lastResult, isTransitioning, advance, jumpTo } =
     useExerciseSession(EXERCISES);
@@ -34,7 +35,12 @@ export default function App() {
   }
 
   if (page === "home") {
-    return <HomePage onStart={() => setPage("exercise")} />;
+    return (
+      <HomePage
+        onNavigateToLogin={() => setPage("login")}
+        onNavigateToRegister={() => setPage("register")}
+      />
+    );
   }
 
   if (page === "practice") {
