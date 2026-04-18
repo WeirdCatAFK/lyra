@@ -14,9 +14,9 @@ const db = new sqlite3.Database(
     sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
     (err) => {
         if (err) {
-            console.error("❌ Error conectando DB:", err.message);
+            console.error("Error conectando DB:", err.message);
         } else {
-            console.log("✅ SQLite conectado en", DB_PATH);
+            console.log("SQLite conectado en", DB_PATH);
         }
     }
 );
@@ -29,17 +29,17 @@ const schemaPath = path.join(__dirname, 'schema.sql');
 
 fs.readFile(schemaPath, 'utf8', (err, sql) => {
     if (err) {
-        console.error("❌ Error leyendo schema:", err);
+        console.error("Error leyendo schema:", err);
         return;
     }
 
     db.exec(sql, (err) => {
         if (err) {
-            console.error("❌ Error ejecutando schema:", err.message);
+            console.error("Error ejecutando schema:", err.message);
             return;
         }
 
-        console.log("✅ Tablas creadas correctamente");
+        console.log("Tablas creadas correctamente");
         // Migrations: add columns that may be missing from older DBs
         const migrations = [
             "ALTER TABLE Cnn_training_data ADD COLUMN user_id INTEGER REFERENCES Users(user_id)",

@@ -31,10 +31,10 @@ async function post(url, body, token) {
 
 function assert(name, condition, detail = '') {
     if (condition) {
-        console.log(`  ✅  ${name}`);
+        console.log(`${name}`);
         passed++;
     } else {
-        console.log(`  ❌  ${name}${detail ? ' — ' + detail : ''}`);
+        console.log(`${name}${detail ? ' — ' + detail : ''}`);
         failed++;
     }
 }

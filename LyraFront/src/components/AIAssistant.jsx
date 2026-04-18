@@ -7,6 +7,7 @@ const AIAssistant = ({
   isOpen,
   onOpenChange,
   transcript,
+  interimTranscript,
   isListening,
   status,
   errorMessage,
@@ -17,8 +18,20 @@ const AIAssistant = ({
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [isStatusCollapsed, setIsStatusCollapsed] = useState(() => {
+    try { return localStorage.getItem('lyra_voice_status_collapsed') === '1'; }
+    catch { return false; }
+  });
   const { play: playAudio, isPlaying: isBotSpeaking } = useTextToSpeech();
-  const liveTranscript = transcript.trim();
+  const liveTranscript = (interimTranscript?.trim() || transcript.trim());
+
+  const toggleStatusCollapsed = () => {
+    setIsStatusCollapsed((v) => {
+      const next = !v;
+      try { localStorage.setItem('lyra_voice_status_collapsed', next ? '1' : '0'); } catch { /* noop */ }
+      return next;
+    });
+  };
   const listeningLabel = status === 'unsupported'
     ? 'No disponible'
     : status === 'error'
@@ -91,6 +104,7 @@ const AIAssistant = ({
     }
 
     void submitMessage(voiceDraft || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- token-style trigger; voiceDraft snapshot is intentional
   }, [voiceSubmitToken]);
 
   return (
@@ -98,13 +112,37 @@ const AIAssistant = ({
       <div className={`ai-assistant ${isBotSpeaking ? 'speaking' : ''}`} onClick={toggleChat}>
         <img src="/src/assets/luma.png" alt="Lyra AI Assistant" />
       </div>
-      <div className="voice-status" aria-live="polite">
-        <div className="voice-status-title">{listeningLabel}</div>
-        <div className="voice-status-text">
-          {liveTranscript || 'Di “Lira” para abrir el asistente.'}
+      {isStatusCollapsed ? (
+        <button
+          type="button"
+          className="voice-status-collapsed"
+          onClick={toggleStatusCollapsed}
+          title="Mostrar estado del micrófono"
+          aria-label="Mostrar estado del micrófono"
+        >
+          <span className={`voice-status-dot ${isListening ? 'listening' : status === 'error' ? 'error' : ''}`} />
+          <span className="voice-status-collapsed-label">{listeningLabel}</span>
+        </button>
+      ) : (
+        <div className="voice-status" aria-live="polite">
+          <div className="voice-status-header">
+            <div className="voice-status-title">{listeningLabel}</div>
+            <button
+              type="button"
+              className="voice-status-collapse-btn"
+              onClick={toggleStatusCollapsed}
+              title="Minimizar"
+              aria-label="Minimizar estado del micrófono"
+            >
+              −
+            </button>
+          </div>
+          <div className="voice-status-text">
+            {liveTranscript || 'Di “Lyra” para abrir el asistente.'}
+          </div>
+          {errorMessage && <div className="voice-status-error">{errorMessage}</div>}
         </div>
-        {errorMessage && <div className="voice-status-error">{errorMessage}</div>}
-      </div>
+      )}
       {isOpen && (
         <div className="chat-window">
           <div className="chat-header">

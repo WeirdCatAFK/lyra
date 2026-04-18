@@ -49,6 +49,36 @@ function chord(pitches, fingers, startBeat, duration, hand) {
 
 const CATALOG = [
     {
+        title: 'Notas repetidas — Pulgar MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'finger_independence'],
+        notation: {
+            tempo_bpm: 60,
+            notes: seq([60, 60, 60, 60], [1, 1, 1, 1], 'right'),
+        },
+        metric_schema: baseRH,
+    },
+    {
+        title: 'Notas repetidas — Dedo medio MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'finger_independence'],
+        notation: {
+            tempo_bpm: 60,
+            notes: seq([64, 64, 64, 64], [3, 3, 3, 3], 'right'),
+        },
+        metric_schema: baseRH,
+    },
+    {
+        title: 'Notas repetidas — Meñique MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'finger_independence'],
+        notation: {
+            tempo_bpm: 60,
+            notes: seq([67, 67, 67, 67], [5, 5, 5, 5], 'right'),
+        },
+        metric_schema: baseRH,
+    },
+    {
         title: 'Posición de cinco dedos — Mano derecha',
         difficulty: 1,
         target_skills: ['right_hand', 'finger_independence'],
@@ -67,6 +97,73 @@ const CATALOG = [
             notes: seq([48, 50, 52, 53, 55], [5, 4, 3, 2, 1], 'left'),
         },
         metric_schema: baseLH,
+    },
+    {
+        title: 'Dos notas alternadas — MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'intervals'],
+        notation: {
+            tempo_bpm: 70,
+            notes: seq(
+                [60, 64, 60, 64, 60, 64, 60, 64],
+                [1,  3,  1,  3,  1,  3,  1,  3],
+                'right'
+            ),
+        },
+        metric_schema: baseRH,
+    },
+    {
+        title: 'Tres notas — MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'finger_independence'],
+        notation: {
+            tempo_bpm: 70,
+            notes: seq([60, 62, 64, 62, 60], [1, 2, 3, 2, 1], 'right'),
+        },
+        metric_schema: baseRH,
+    },
+    {
+        title: 'Quinta Do-Sol — MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'chords', 'intervals'],
+        notation: {
+            tempo_bpm: 60,
+            notes: [
+                ...chord([60, 67], [1, 5], 0, 1, 'right'),
+                ...chord([60, 67], [1, 5], 1, 1, 'right'),
+                ...chord([60, 67], [1, 5], 2, 1, 'right'),
+                ...chord([60, 67], [1, 5], 3, 1, 'right'),
+            ],
+        },
+        metric_schema: { ...baseRH, note_length_accuracy: { weight: 0.7 } },
+    },
+    {
+        title: 'Hot Cross Buns — MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'melody'],
+        notation: {
+            tempo_bpm: 80,
+            notes: seq(
+                [64, 62, 60, 64, 62, 60, 60, 60, 60, 60, 62, 62, 62, 62, 64, 62, 60],
+                [3,  2,  1,  3,  2,  1,  1,  1,  1,  1,  2,  2,  2,  2,  3,  2,  1],
+                'right'
+            ),
+        },
+        metric_schema: { ...baseRH, note_length_accuracy: { weight: 0.6 } },
+    },
+    {
+        title: 'Cambio de posición Do→Sol — MD',
+        difficulty: 1,
+        target_skills: ['right_hand', 'hand_position'],
+        notation: {
+            tempo_bpm: 60,
+            notes: seq(
+                [60, 62, 64, 65, 67, 67, 69, 71, 72, 74],
+                [1,  2,  3,  4,  5,  1,  2,  3,  4,  5],
+                'right'
+            ),
+        },
+        metric_schema: baseRH,
     },
     {
         title: 'Escala Do Mayor — Mano derecha',
@@ -254,7 +351,7 @@ async function seedExercises() {
         const missing = CATALOG.filter(e => !haveTitles.has(e.title));
 
         if (missing.length === 0) {
-            console.log(`✅ Exercise catalog already seeded (${existing.length} rows)`);
+            console.log(`Exercise catalog already seeded (${existing.length} rows)`);
             return;
         }
 
@@ -271,9 +368,9 @@ async function seedExercises() {
                 ]
             );
         }
-        console.log(`✅ Seeded ${missing.length} new exercises (catalog total: ${existing.length + missing.length})`);
+        console.log(`Seeded ${missing.length} new exercises (catalog total: ${existing.length + missing.length})`);
     } catch (err) {
-        console.error('❌ Exercise seed failed:', err.message);
+        console.error('Exercise seed failed:', err.message);
     }
 }
 

@@ -37,13 +37,96 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
+  .voice-status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .voice-status-collapse-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #ffffff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .voice-status-collapse-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .voice-status-collapsed {
+    position: fixed;
+    left: 20px;
+    bottom: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(2, 26, 84, 0.9);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    z-index: 999;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .voice-status-collapsed:hover {
+    transform: translateY(-1px);
+    background: rgba(2, 26, 84, 1);
+  }
+
+  .voice-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+  }
+
+  .voice-status-dot.listening {
+    background: #7cf0a3;
+    box-shadow: 0 0 0 3px rgba(124, 240, 163, 0.2);
+    animation: voice-status-pulse 1.6s ease-in-out infinite;
+  }
+
+  .voice-status-dot.error {
+    background: #ff8a8a;
+  }
+
+  @keyframes voice-status-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(124, 240, 163, 0.35); }
+    50%      { box-shadow: 0 0 0 6px rgba(124, 240, 163, 0); }
+  }
+
+  .voice-status-collapsed-label {
+    line-height: 1;
+  }
+
   .voice-status-title {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     opacity: 0.8;
-    margin-bottom: 4px;
   }
 
   .voice-status-text {

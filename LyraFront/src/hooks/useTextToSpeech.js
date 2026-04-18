@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
-const ELEVENLABS_API_KEY = "bd7478fe7d1067c6cd115942bf8bb4f13621dc3f0930dec311d591f339ac1776";
-const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Default voice ID, you can change this
+const ELEVENLABS_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY;
+const VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM";
 
 const useTextToSpeech = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -9,6 +9,10 @@ const useTextToSpeech = () => {
 
   const play = useCallback(async (text) => {
     if (!text || isPlaying) return;
+    if (!ELEVENLABS_API_KEY) {
+      setError("VITE_ELEVENLABS_API_KEY no está configurada");
+      return;
+    }
 
     setIsPlaying(true);
     setError(null);
