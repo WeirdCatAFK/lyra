@@ -7,6 +7,7 @@ import { EXERCISES } from "./lib/exercises.js";
 import RegisterScreen from "./components/Registro-InicioS/RegisterPage.jsx";
 import LoginScreen from "./components/Registro-InicioS/LoginPage.jsx";
 import ForgotPassword from "./components/Registro-InicioS/ForgotPasswordPage.jsx";
+import PracticePage from "./components/Registro-InicioS/PracticePage.jsx";
 
 export default function App() {
   const [page, setPage] = useState("login");
@@ -34,6 +35,10 @@ export default function App() {
 
   if (page === "home") {
     return <HomePage onStart={() => setPage("exercise")} />;
+  }
+
+  if (page === "practice") {
+    return <PracticePage />;
   }
 
   return (

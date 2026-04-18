@@ -1,0 +1,281 @@
+/* ExercisesPage.css */
+.practice-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+  background: linear-gradient(to bottom, #021a54, #ff85bb);
+}
+
+/* --- BARRA DE NAVEGACIÓN --- */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #021a54;
+  color: white;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-logo-placeholder {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.nav-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.025em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.nav-item {
+  color: rgba(255, 255, 255, 0.7);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-item:hover {
+  color: white;
+}
+
+.nav-item.active {
+  color: white;
+  border-bottom: 2px solid white;
+  padding-bottom: 0.25rem;
+}
+
+.profile-btn {
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.profile-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. SECCIÓN DEL AGENTE */
+.agent-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .agent-section {
+    flex-direction: row;
+  }
+}
+
+.agent-image-box {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.placeholder-text-light {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 0 0.5rem;
+  z-index: 10;
+  font-weight: 500;
+}
+
+.agent-text-container {
+  max-width: 28rem;
+}
+
+.agent-dialogue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f5f5f5;
+  line-height: 1.375;
+}
+
+/* 2. SECCIÓN DE PARTITURA */
+.score-section {
+  background-color: white;
+  width: 100%;
+  padding: 3rem 1.5rem;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.score-layout {
+  width: 100%;
+  max-width: 64rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: relative;
+}
+
+.metronome-box {
+  width: 6rem;
+  height: 7rem;
+  background-color: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.placeholder-text-dark {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  text-align: center;
+  font-weight: 700;
+  z-index: 10;
+}
+
+.center-elements {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+
+.pentagram-box {
+  width: 50%;
+  max-width: 42rem;
+  height: 10rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hands-layout {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 32rem;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+.hand-box {
+  width: 7rem;
+  height: 7rem;
+  background-color: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.balance-spacer {
+  width: 6rem;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .balance-spacer {
+    display: block;
+  }
+}
+
+/* 3. SECCIÓN DEL TECLADO */
+.keyboard-section {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.glass-panel {
+  width: 100%;
+  max-width: 64rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 2rem;
+  padding: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+}
+
+.keyboard-placeholder {
+  width: 100%;
+  aspect-ratio: 21 / 8;
+  background-color: white;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.keyboard-text {
+  color: #6b7280;
+  font-weight: 700;
+  font-size: 1.25rem;
+  z-index: 10;
+  text-align: center;
+}
