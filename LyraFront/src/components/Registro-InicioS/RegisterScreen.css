@@ -172,3 +172,89 @@
     background: rgba(255, 255, 255, 0.20);
 }
 
+.mini-piano {
+    position: relative;
+    width: 350px;
+    height: 140px;
+    margin: 0 auto 25px auto;
+}
+
+/* BLANCAS */
+.white-keys {
+    display: flex;
+    height: 140px;
+}
+
+.white-key {
+    width: 50px;
+    height: 140px;
+    background: white;
+    border: 2px solid #ccc;
+    border-radius:10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 8px;
+    transition: all 0.08s ease;
+    box-shadow: inset 0px -5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.white-key .note {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.white-key .keyboard {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+/* EFECTO BLANCA */
+.white-key.active {
+    background: #d6d1ff;
+    transform: translateY(4px);
+    border-color: #7b5cff;
+}
+
+/* NEGRAS */
+.black-keys {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 350px;
+    height: 90px;
+    pointer-events: none;
+}
+
+.black-key {
+    position: absolute;
+    width: 35px;
+    height: 90px;
+    background: black;
+    border-radius: 8px;
+    box-shadow: inset 0px -4px 10px rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 8px;
+    transition: all 0.08s ease;
+    color: white;
+}
+
+.black-key .note {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.black-key .keyboard {
+    font-size: 9px;
+    opacity: 0.6;
+}
+
+/* EFECTO NEGRA */
+.black-key.active {
+    background: #7b5cff;
+    transform: translateY(4px);
+}
