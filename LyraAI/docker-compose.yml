@@ -1,0 +1,21 @@
+services:
+  lyra-ai:
+    build: .
+    ports:
+      - "8001:8001"
+    volumes:
+      - lyra-ai-data:/data
+    environment:
+      - DATA_DIR=/data
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      # - GEMINI_MODEL=gemini-2.0-flash
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  lyra-ai-data:
+    driver: local
