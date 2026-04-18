@@ -1,102 +1,85 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 const useVoiceRecognition = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [liveTranscript, setLiveTranscript] = useState('');
-  const [status, setStatus] = useState('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [recognition, setRecognition] = useState(null);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      console.error("Web Speech API is not supported by this browser.");
-      setStatus('unsupported');
-      setErrorMessage('Este navegador no soporta reconocimiento de voz.');
+    // Verificar soporte del navegador
+    if (!('webkitSpeechRecognition' in window)) {
+      console.warn("La Web Speech API no está soportada en este navegador (Usa Chrome o Edge).");
       return;
     }
 
-    const recognitionInstance = new SpeechRecognition();
-    recognitionInstance.continuous = true;
-    recognitionInstance.interimResults = true;
-    recognitionInstance.lang = 'es-ES';
-    recognitionInstance.maxAlternatives = 1;
+    const SpeechRecognition = window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    // Configuración para dictado continuo y en español
+    recognition.continuous = true;
+    recognition.interimResults = false; // Solo procesar frases terminadas
+    recognition.lang = 'es-ES';
 
-    recognitionInstance.onstart = () => {
-      setIsListening(true);
-      setStatus('listening');
-      setErrorMessage('');
-    };
-
-    recognitionInstance.onresult = (event) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        } else {
-          interimTranscript += event.results[i][0].transcript;
-        }
-      }
-      const currentTranscript = `${finalTranscript}${interimTranscript}`.trim();
-      if (currentTranscript) {
-        setLiveTranscript(currentTranscript);
-        setTranscript(currentTranscript);
+    // Capturar cada frase hablada
+    recognition.onresult = (event) => {
+      const current = event.resultIndex;
+      const result = event.results[current];
+      
+      if (result.isFinal) {
+        const text = result[0].transcript.trim();
+        setTranscript(text); // Actualizar estado con la última frase completa
       }
     };
 
-    recognitionInstance.onend = () => {
+    // Manejo de errores
+    recognition.onerror = (event) => {
+      console.warn('Reconocimiento de voz (error/detenido):', event.error);
+      if (event.error === 'not-allowed') {
+        setIsListening(false);
+      }
+    };
+
+    // Si se apaga solo, intentar reactivarlo (si debería seguir escuchando)
+    recognition.onend = () => {
       setIsListening(false);
-      setStatus('idle');
     };
 
-    recognitionInstance.onerror = (event) => {
-      console.error('Speech recognition error', event.error);
-      setIsListening(false);
-      setStatus('error');
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setErrorMessage('Permiso de micrófono denegado. Actívalo en el navegador.');
-      } else if (event.error === 'no-speech') {
-        setErrorMessage('No se detectó voz. Intenta hablar un poco más cerca del micrófono.');
-      } else {
-        setErrorMessage(`Error de reconocimiento: ${event.error}`);
-      }
-    };
+    recognitionRef.current = recognition;
 
-    setRecognition(recognitionInstance);
+    return () => {
+      recognition.stop();
+    };
   }, []);
 
   const startListening = useCallback(() => {
-    if (recognition && !isListening) {
-      setStatus('starting');
-      setErrorMessage('');
+    if (recognitionRef.current && !isListening) {
       try {
-        recognition.start();
-      } catch (error) {
-        setStatus('error');
-        setErrorMessage('No se pudo iniciar el micrófono.');
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (err) {
+        console.warn("Intento de iniciar el micrófono falló (posiblemente ya estaba activo).");
       }
     }
-  }, [recognition, isListening]);
+  }, [isListening]);
 
   const stopListening = useCallback(() => {
-    if (recognition && isListening) {
-      recognition.stop();
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
       setIsListening(false);
+      setTranscript(''); // Limpiar transcripción al detener
     }
-  }, [recognition, isListening]);
+  }, [isListening]);
+
+  const resetTranscript = useCallback(() => {
+    setTranscript('');
+  }, []);
 
   return {
     isListening,
     transcript,
-    liveTranscript,
-    status,
-    errorMessage,
     startListening,
     stopListening,
-    setTranscript
+    resetTranscript
   };
 };
 

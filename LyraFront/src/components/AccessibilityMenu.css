@@ -1,0 +1,106 @@
+.accessibility-widget {
+  position: fixed;
+  top: 80px;
+  right: 32px;
+  z-index: 1000;
+}
+
+.accessibility-btn {
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-color, #333333);
+  border: 2px solid var(--border-color, #dddddd);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.accessibility-btn:hover {
+  transform: scale(1.1);
+  background-color: #f0f0f0;
+}
+
+.accessibility-panel {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 200px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #eee;
+}
+
+.accessibility-panel h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.access-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #333;
+}
+
+/* Global classes for Accessibility Features */
+body.high-contrast {
+  --bg-color: #000000 !important;
+  --bg-surface: #111111 !important;
+  --text-color: #ffff00 !important;
+  --border-color: #ffff00 !important;
+  --primary-color: #00ffff !important;
+  background-color: #000 !important;
+  color: #ff0 !important;
+}
+
+body.high-contrast button {
+  background-color: #000 !important;
+  color: #ff0 !important;
+  border: 2px solid #ff0 !important;
+}
+
+body.high-contrast .chat-window {
+  background-color: #111 !important;
+  border-color: #ff0 !important;
+  color: #ff0 !important;
+}
+
+body.high-contrast .message.user,
+body.high-contrast .message.ai {
+  background-color: #222 !important;
+  color: #ff0 !important;
+  border: 1px solid #ff0;
+}
+
+body.high-contrast .ai-assistant {
+  box-shadow: 0 0 15px #ff0;
+  border: 2px solid #ff0;
+}
+
+body.large-text {
+  font-size: 120% !important;
+}
+
+body.large-text h1 { font-size: 3rem !important; }
+body.large-text h2 { font-size: 2.2rem !important; }
+body.large-text h3 { font-size: 1.8rem !important; }
+body.large-text input, body.large-text button {
+  font-size: 110% !important;
+  padding: 12px 20px !important;
+}
