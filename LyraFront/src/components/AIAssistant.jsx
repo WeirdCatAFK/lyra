@@ -138,7 +138,10 @@ const AIAssistant = ({
             </button>
           </div>
           <div className="voice-status-text">
-            {liveTranscript || 'Di “Lyra” para abrir el asistente.'}
+            {liveTranscript
+              || (status === 'idle'
+                ? 'Haz clic en el asistente para activar el micrófono.'
+                : 'Di “Lyra” para abrir el asistente.')}
           </div>
           {errorMessage && <div className="voice-status-error">{errorMessage}</div>}
         </div>

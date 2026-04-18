@@ -35,9 +35,19 @@ export default function App() {
   const goExercises = () => setPage("exercises");
   const handleLogout = () => { clearAuth(); setPage("home"); };
 
-  // Iniciar la escucha del micrófono en cuanto arranca la app para detectar la palabra de paso
+  // Auto-arrancar sólo si el usuario ya concedió permiso del micrófono en otra
+  // visita. En la primera visita esperamos un gesto (clic sobre el asistente) para
+  // evitar el doble prompt de StrictMode y cumplir con la política de Chrome.
   useEffect(() => {
-    startListening();
+    if (!navigator.permissions?.query) return;
+    let cancelled = false;
+    navigator.permissions
+      .query({ name: 'microphone' })
+      .then((perm) => {
+        if (!cancelled && perm.state === 'granted') startListening();
+      })
+      .catch(() => { /* Permissions API no disponible — esperar gesto del usuario */ });
+    return () => { cancelled = true; };
   }, [startListening]);
 
   const handleSendMessage = async (message) => {
